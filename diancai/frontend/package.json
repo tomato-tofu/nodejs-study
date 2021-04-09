@@ -8,6 +8,8 @@
   },
   "dependencies": {},
   "devDependencies": {
+    "art-template": "^4.13.2",
+    "art-template-loader": "^1.4.3",
     "copy-webpack-plugin": "^6.4.1",
     "html-webpack-plugin": "^4.5.2",
     "webpack": "^4.43.0",
