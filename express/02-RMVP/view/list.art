@@ -1,0 +1,5 @@
+<ul>
+{{each list}}
+		<div>test : 索引{{$index}}. 值{{$value}}</div>
+{{/each}}
+</ul> 
