@@ -3,6 +3,7 @@ const webpack = require("webpack");
 
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const CopyPlugin = require("copy-webpack-plugin");
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
 module.exports = {
   mode: "development",
@@ -27,9 +28,28 @@ module.exports = {
     }),
     // 模块热替换功能
     new webpack.HotModuleReplacementPlugin(),
+    // new MiniCssExtractPlugin({
+    //   linkType: "text/css",
+    // }),
   ],
   module: {
     rules: [
+      {
+        test: /\.less$/,
+        use: [
+          // MiniCssExtractPlugin.loader,
+          {
+            loader: "style-loader", // creates style nodes from JS strings
+          },
+          {
+            loader: "css-loader", // translates CSS into CommonJS
+          },
+
+          {
+            loader: "less-loader", // compiles Less to CSS
+          },
+        ],
+      },
       {
         test: /\.art$/,
         loader: "art-template-loader",
@@ -49,5 +69,13 @@ module.exports = {
     //     },
     //   },
     // },
+    proxy: {
+      "/api": {
+        target: "http://localhost:3000/api",
+        pathRewrite: {
+          "^/api": "",
+        },
+      },
+    },
   },
 };

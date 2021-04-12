@@ -1,3 +1,5 @@
-import indexTpl from "./views/index.art";
+import "./asstes/common.less";
 
-document.getElementById("root").innerHTML = indexTpl({});
+import router from "./routers";
+
+router.go("/index");
