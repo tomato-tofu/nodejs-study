@@ -1,9 +1,0 @@
-<div class="box-tools">
-	<ul class="pagination pagination-sm no-margin pull-right">
-		<li><a href="#">&laquo;</a></li>
-		{{each data}}
-			<li><a href="#"></a></li>
-		{{/each}}
-		<li><a href="#">&raquo;</a></li>
-	</ul>
-</div>

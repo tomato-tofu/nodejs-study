@@ -9,13 +9,16 @@
 			</div>
 			<!-- /.box-header -->
 			<div class="box-body no-padding">
-				<table class="table" id="list-content">
-					
-				</table>
+				<table class="table" id="list-content"></table>
 			</div>
 			<!-- /.box-body -->
 
-			<div class="box-footer" id="pagenation"></div>
+			<div class="box-footer">
+				<div class="box-tools">
+					<ul class="pagination pagination-sm no-margin pull-right" id="pagination">
+					</ul>
+				</div>
+			</div>
 		</div>
 		<!-- /.box -->
 	</div>

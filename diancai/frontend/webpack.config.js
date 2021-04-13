@@ -4,12 +4,16 @@ const webpack = require("webpack");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const CopyPlugin = require("copy-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const ForkTsCheckerWebpackPlugin = require("fork-ts-checker-webpack-plugin");
 
 module.exports = {
   mode: "development",
   devtool: "source-map",
   entry: {
     "js/app": "./src/app.js",
+  },
+  resolve: {
+    extensions: [".ts", ".tsx", ".js"],
   },
   output: {
     path: path.join(__dirname, "./dist"),
@@ -28,12 +32,22 @@ module.exports = {
     }),
     // 模块热替换功能
     new webpack.HotModuleReplacementPlugin(),
+    new ForkTsCheckerWebpackPlugin(),
     // new MiniCssExtractPlugin({
     //   linkType: "text/css",
     // }),
   ],
   module: {
     rules: [
+      {
+        test: /\.ts?$/,
+        loader: "ts-loader",
+        exclude: /node_modules/,
+        options: {
+          // disable type checker - we will use it in fork plugin
+          transpileOnly: true,
+        },
+      },
       {
         test: /\.less$/,
         use: [

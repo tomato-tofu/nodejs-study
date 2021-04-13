@@ -11,11 +11,16 @@ const signup = (name) => {
 };
 
 const getAll = () => {
-  return Menus.find();
+  return Menus.find().sort({ _id: -1 });
+};
+
+const remove = (id) => {
+  return Menus.findByIdAndRemove(id);
 };
 
 module.exports = {
   signup,
   findOne,
   getAll,
+  remove,
 };
