@@ -40,3 +40,40 @@ app.use(function (err, req, res, next) {
 });
 
 module.exports = app;
+
+var lineArr24 = [
+  [127, 34],
+  [127, 21],
+  [110, 15],
+]; //24小时警戒线坐标集合
+var lineArr48 = [
+  [132, 34],
+  [132, 15],
+  [105, 0],
+]; //48小时警戒线集合
+
+var symbol24 = new esri.symbol.SimpleLineSymbol(
+  esri.symbol.SimpleLineSymbol.STYLE_SOLID,
+  new dojo.Color([255, 0, 0]),
+  1
+);
+var symbol48 = new esri.symbol.SimpleLineSymbol(
+  esri.symbol.SimpleLineSymbol.STYLE_DASHDOTDOT,
+  new dojo.Color([255, 255, 153]),
+  1
+);
+
+var T_Symbol = new esri.symbol.SimpleFillSymbol(
+  esri.symbol.SimpleFillSymbol.STYLE_SOLID,
+  new esri.symbol.SimpleLineSymbol(
+    esri.symbol.SimpleLineSymbol.STYLE_SOLID,
+    new dojo.Color([255, 165, 0]),
+    0.01
+  ),
+  new dojo.Color([255, 20, 147, 0.35])
+);
+var Line_symbol = new esri.symbol.SimpleLineSymbol(
+  esri.symbol.SimpleLineSymbol.STYLE_DASHDOTDOT,
+  new dojo.Color([255, 215, 0]),
+  1
+);

@@ -1,57 +1,80 @@
 <div class="row">
-	<!-- /.col -->
-	<div class="col-md-12">
-		<div class="box">
-			<div class="box-header">
-				<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modal-signin">
-					新增菜名
-				</button>
-			</div>
-			<!-- /.box-header -->
-			<div class="box-body no-padding">
-				<table class="table" id="list-content"></table>
-			</div>
-			<!-- /.box-body -->
+  <!-- /.col -->
+  <div class="col-md-12">
+    <div class="box" id="menu">
+      <div class="box-header">
+        <button
+          type="button"
+          class="btn btn-primary"
+          data-toggle="modal"
+          data-target="#modal-signin"
+        >
+          新增菜名
+        </button>
+      </div>
+      <!-- /.box-header -->
+      <div class="box-body no-padding">
+        <table class="table" id="list-content"></table>
+      </div>
+      <!-- /.box-body -->
 
-			<div class="box-footer">
-				<div class="box-tools">
-					<ul class="pagination pagination-sm no-margin pull-right" id="pagination">
-					</ul>
-				</div>
-			</div>
-		</div>
-		<!-- /.box -->
-	</div>
+      <div class="box-footer">
+        <div class="box-tools">
+          <ul
+            class="pagination pagination-sm no-margin pull-right"
+            id="pagination"
+          ></ul>
+        </div>
+      </div>
+    </div>
+    <!-- /.box -->
+  </div>
 </div>
 <!-- /.row -->
 
-
 <div class="modal fade" id="modal-signin">
-	<div class="modal-dialog">
-		<div class="modal-content">
-			<div class="modal-header">
-				<h4 class="modal-title">新增菜名</h4>
-				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-					<span aria-hidden="true">×</span>
-				</button>
-			</div>
-			<div class="modal-body">
-				<form class="form-horizontal" id="signup-form">
-					<div class="form-group">
-						<label for="name" class="col-sm-2 control-label">菜名</label>
-						<div class="col-sm-10">
-							<input class="form-control" name="name" placeholder="">
-						</div>
-					</div>
-				</form>
-			</div>
-			<div class="modal-footer justify-content-between">
-				<button type="button" class="btn btn-outline-light" data-dismiss="modal"  id="signup-close">取消</button>
-				<button type="button" class="btn btn-outline-light btn-primary" id="signup-save">保存</button>
-			</div>
-		</div>
-		<!-- /.modal-content -->	
-	</div>
-	<!-- /.modal-dialog -->
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">新增菜名</h4>
+        <button
+          type="button"
+          class="close"
+          data-dismiss="modal"
+          aria-label="Close"
+        >
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form class="form-horizontal" id="signup-form">
+          <div class="form-group">
+            <label for="name" class="col-sm-2 control-label">菜名</label>
+            <div class="col-sm-10">
+              <input class="form-control" name="name" placeholder="" />
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer justify-content-between">
+        <button
+          type="button"
+          class="btn btn-outline-light"
+          data-dismiss="modal"
+          id="signup-close"
+        >
+          取消
+        </button>
+        <button
+          type="button"
+          class="btn btn-outline-light btn-primary"
+          id="signup-save"
+        >
+          保存
+        </button>
+      </div>
+    </div>
+    <!-- /.modal-content -->
+  </div>
+  <!-- /.modal-dialog -->
 </div>
-

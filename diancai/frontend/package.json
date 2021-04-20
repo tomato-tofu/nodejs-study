@@ -10,6 +10,7 @@
     "sme-router": "^0.12.8"
   },
   "devDependencies": {
+    "@types/jquery": "^3.5.5",
     "art-template": "^4.13.2",
     "art-template-loader": "^1.4.3",
     "copy-webpack-plugin": "^6.4.1",

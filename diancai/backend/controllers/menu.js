@@ -1,4 +1,4 @@
-const menusModal = require("../modals/menus");
+const menusModal = require("../models/menus");
 const item = async (req, res, next) => {
   res.set("content-type", "application/json;charset=utf-8");
 

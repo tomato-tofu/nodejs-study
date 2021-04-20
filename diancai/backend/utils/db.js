@@ -13,6 +13,16 @@ var menusSchema = mongoose.Schema({
   name: String,
 });
 
+var usersSchema = mongoose.Schema({
+  name: String,
+  password: String,
+});
+
 var Menus = mongoose.model("menus", menusSchema);
 
-exports.Menus = Menus;
+var Users = mongoose.model("users", usersSchema);
+
+module.exports = {
+  Menus,
+  Users,
+};
