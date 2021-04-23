@@ -13,6 +13,7 @@
       <!-- 解析常见指令 -->
       <p v-html="msg1" title="混淆属性1">混淆文本1</p>
       <p v-text="msg2" title="混淆属性2">混淆文本2</p>
+      <p v-text="something" title="混淆属性3">混淆文本3</p>
       <input type="text" v-model="something" />
       <!-- 双向数据绑定 -->
       <p>{{something}}</p>
@@ -27,7 +28,7 @@
 
     <script type="module">
       import MVVM from "./MVVM.js";
-      let vm = new MVVM({
+      const vm = new MVVM({
         el: "#app",
         data: {
           title: "手把手教你撸一个vue框架",
@@ -44,7 +45,8 @@
         },
         methods: {
           sayHi() {
-            console.log("hello world");
+            this.something = "hello world";
+            // console.log();
           },
           printThis() {
             console.log(this);

@@ -8,7 +8,7 @@ const getValue = (vm, expr) => {
 };
 // 获取文本编译后的对应的数据test
 const getTextValue = (vm, expr) => {
-  return expr.replace(/\{\{([^}]+)\}\}/g, (...args) => {
+  return expr.replace(/\{\{(.+?)\}\}/g, (...args) => {
     return getValue(vm, args[1]);
   });
 };
@@ -18,32 +18,37 @@ const compileUtil = {
   text(node, vm, expr) {
     node.textContent = getValue(vm, expr);
     new Watcher(vm, expr, (newValue) => {
+      console.log("执行watch text1");
       node.textContent = newValue;
     });
   },
   textContent(node, vm, expr) {
     node.textContent = getTextValue(vm, expr);
-    // new Watcher(vm, expr, (newValue) => {
-    //   node.textContent = newValue;
-    // });
+    new Watcher(vm, expr, (newValue) => {
+      node.textContent = newValue;
+    });
   },
   // 解析v-html
   html(node, vm, expr) {
-    node.innerHTML = this.getValue(vm, expr);
+    this.updater.htmlUpdater(node, getValue(vm, expr));
     new Watcher(vm, expr, (newValue) => {
-      node.innerHTML = newValue;
+      console.log("执行watch html");
+      this.updater.htmlUpdater(node, newValue);
     });
   },
   // 解析v-model
   model(node, vm, expr) {
-    node.value = this.getValue(vm, expr);
-    node.addEventListener("input", () => {
+    const that = this;
+    this.updater.modelUpdater(node, getValue(vm, expr));
+
+    node.addEventListener("input", function () {
       // 下面这个写法不能深度改变数据
       // vm.$data[expr] = this.value
-      this.setVal(vm, expr, this.value);
+      that.setVal(vm, expr, this.value);
     });
     new Watcher(vm, expr, (newValue) => {
-      node.value = newValue;
+      console.log("执行watch model ");
+      this.updater.modelUpdater(node, newValue);
     });
   },
   // 解析v-on
@@ -66,18 +71,15 @@ const compileUtil = {
       }
     });
   },
-  getValue(vm, expr) {
-    expr = expr.split("."); // [message, a, b, c]
-    return expr.reduce((prev, next) => {
-      return prev[next];
-    }, vm.$data);
-  },
   updater: {
     textUpdater(node, value) {
       node.textContent = typeof value === "undefined" ? "" : value;
     },
     modelUpdater(node, value) {
       node.value = typeof value === "undefined" ? "" : value;
+    },
+    htmlUpdater(node, value) {
+      node.innerHTML = value;
     },
   },
 };
@@ -94,14 +96,14 @@ class Compile {
     let fragment = document.createDocumentFragment();
     const childs = node.childNodes;
 
-    [...childs].forEach((node) => {
+    Array.from(childs).forEach((node) => {
       fragment.appendChild(node);
     });
     return fragment;
   }
   compile(fragment) {
     let childNodes = fragment.childNodes;
-    [...childNodes].forEach((node) => {
+    Array.from(childNodes).forEach((node) => {
       // 如果是元素节点,则解析指令
       if (this.isElementNode(node)) {
         this.compileElementNode(node);
@@ -121,6 +123,7 @@ class Compile {
   isElementNode(node) {
     return node.nodeType === 1;
   }
+
   isTextNode(node) {
     return node.nodeType === 3;
   }
@@ -130,19 +133,28 @@ class Compile {
   isEventDirective(attrName) {
     return attrName.indexOf("on") >= 0;
   }
+  isEventDirectiveBySuger(attrName) {
+    return attrName.indexOf("@") >= 0;
+  }
   compileElementNode(node) {
     let attrs = node.attributes;
-    [...attrs].forEach((attr) => {
+    //[...attrs].forEach((attr) => {
+    Array.from(attrs).forEach((attr) => {
       const attrName = attr.name;
       if (this.isDerective(attrName)) {
-        const dir = attr.value; // content1
-
-        const [, expr] = attrName.split("-");
-
-        if (this.isEventDirective(expr)) {
-          compileUtil.eventHandler(node, this.vm, dir, expr);
+        const expr = attr.value;
+        const [, eventType] = attrName.split("-");
+        if (this.isEventDirective(eventType)) {
+          compileUtil.eventHandler(node, this.vm, expr, eventType);
+        } else if (this.isEventDirectiveBySuger(attrName)) {
+          const [, eventType] = attrName.split("@");
+          compileUtil.eventHandler(node, this.vm, expr, eventType);
         } else {
-          compileUtil[expr] && compileUtil[expr](node, this.vm, dir);
+          try {
+            compileUtil[eventType](node, this.vm, expr);
+          } catch (e) {
+            throw e;
+          }
         }
       }
     });
@@ -166,7 +178,7 @@ class Observe {
     Object.keys(data).forEach((key) => {
       // 数据劫持
       this.defineReactive(data, key, data[key]);
-      this.observe(data[key]); // 深度递归劫持，保证子属性的值也会被劫持
+      this.observe(data[key]);
     });
   }
   defineReactive(obj, key, value) {
@@ -174,10 +186,9 @@ class Observe {
     let dep = new Dep();
     Object.defineProperty(obj, key, {
       enumerable: true,
-      configurable: true,
+      configurable: false,
       get() {
         // 在取值时将订阅者push入订阅者数组
-        console.log(dep);
         Dep.target && dep.addSub(Dep.target);
         // 当取值时调用
         return value;
@@ -185,8 +196,7 @@ class Observe {
       set(newValue) {
         //当data属性中设置新值得时候 更改获取的新值
         if (newValue !== value) {
-          _this.observe(newValue); // 如果是对象继续劫持
-          console.log("监听到值变化了,旧值：", value, " --> 新值：", newValue);
+          // _this.observe(newValue); // 如果是对象继续劫持
           value = newValue;
           dep.notify(); //通知所有人 数据更新了
         }
@@ -218,29 +228,33 @@ Watcher订阅者作为Observer和Compile之间通信的桥梁，主要做的事�
 */
 class Watcher {
   constructor(vm, expr, cb) {
+    // 获取当前订阅者
+    Dep.target = this;
+    // 触发getter，当前订阅者添加订阅器中 在 劫持数据时，将订阅者放到订阅者数组
     this.vm = vm;
     this.expr = expr;
     this.cb = cb;
+    // 初始化时缓存当前的值
     this.value = this.get();
+    // 重置订阅者
+    Dep.target = null;
   }
 
   get() {
     // 获取文本编译后的对应的数据
-    // 获取当前订阅者
-    Dep.target = this;
-    // 触发getter，当前订阅者添加订阅器中 在 劫持数据时，将订阅者放到订阅者数组
-    let value = getValue(this.vm, this.expr);
-    // 重置订阅者
-    Dep.target = null;
-    return value;
+    if (/\{\{(.+?)\}\}/g.test(this.expr)) {
+      return getTextValue(this.vm, this.expr);
+    } else {
+      return getValue(this.vm, this.expr);
+    }
   }
 
   update() {
-    let newValue = get();
-    let oldValue = this.value;
+    const oldValue = this.value;
+    this.value = this.get();
     // 更新的值 与 以前的值 进行比对， 如果发生变化就更新方法
-    if (newValue !== oldValue) {
-      this.cb(this.vm, value, oldValue);
+    if (this.value !== oldValue) {
+      this.cb(this.value, oldValue);
     }
   }
 }
@@ -255,7 +269,9 @@ export default class MVVM {
       this.proxy(key);
     }
     if (this.$el) {
+      // 先劫持填充的数据
       new Observe(this.$data);
+      // 再解析使用的数据
       new Compile(this.$el, this);
     }
   }
