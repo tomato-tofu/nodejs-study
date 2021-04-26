@@ -12,5 +12,7 @@
   },
   "devDependencies": {
     "node-rsa": "^1.1.1"
-  }
+  },
+  "repository": "https://github.com/tomato-tofu/nodejs-study.git",
+  "author": "<490351161@qq.com>"
 }
